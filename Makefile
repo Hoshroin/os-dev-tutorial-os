@@ -49,7 +49,7 @@ $(BUILD_DIR)/kernel.bin: always $(BUILD_DIR)/kernel_entry.o ${OBJ}
 ifeq ("$(wildcard $(dir $@))" ,"")
 	mkdir -p $(dir $@)
 endif
-	$(GCC) -ffreestanding -c $(patsubst %.o,%.c,$(subst $(BUILD_DIR)/,$(SRC_DIR)/,$@)) -o $@
+	$(GCC) -std=gnu99 -ffreestanding -c $(patsubst %.o,%.c,$(subst $(BUILD_DIR)/,$(SRC_DIR)/,$@)) -o $@
 
 always:
 	mkdir -p $(BUILD_DIR)
