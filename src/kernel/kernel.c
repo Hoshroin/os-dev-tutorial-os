@@ -32,13 +32,6 @@ int curs_row = 0;
 uint8_t term_color = 0x0F;  //white on black
 
 // Returns entry's color setting (8-bit)
-uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
-	// BBBBFFFF
-	uint8_t sum = (uint8_t) bg << 4 | fg;
-	return sum;
-}
-
-// Returns entry's color setting (8-bit)
 uint8_t vga_entry_color(uint8_t fg, uint8_t bg) {
 	// BBBBFFFF
 	uint8_t sum = bg << 4 | fg;
