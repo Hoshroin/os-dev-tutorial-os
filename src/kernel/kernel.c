@@ -52,6 +52,30 @@ void term_init() {
 	}
 }
 
+// Scroll up the screen by lines
+// Params:
+//   - sl: scroll up how many lines
+void term_scroll(int sl) {
+	// Copy data from lower row to higher row
+	for (int col = 0; col < VGA_COLS; col++) {
+		for (int row = sl; row < VGA_ROWS; row++) {
+			const size_t index_src = (VGA_COLS * row) + col;  // lower row
+			const size_t index_dst = (VGA_COLS * (row - sl)) + col;  // higher row
+
+			uint16_t entry_src = vga_buffer[index_src];
+			vga_buffer[index_dst] = entry_src;
+		}
+	}
+
+	// Clear the bottom area
+	for (int col = 0; col < VGA_COLS; col++) {
+		for (int row = (VGA_ROWS - sl); row < VGA_ROWS; row++) {
+			const size_t index = (VGA_COLS * row) + col;
+			vga_buffer[index] = ((uint16_t)term_color << 8) | ' ';  // space is good enough to blank
+		}
+	}
+}
+
 // Puts a char onto the screen
 void term_putc(char c) {
 	switch (c) {
@@ -77,11 +101,11 @@ void term_putc(char c) {
 		curs_row++;
 	}
 
-	// if get past the last row, go to top-left of the srceen
-	// TODO: scroll page
+	// if get past the last row, scroll the screen and get a new line
 	if (curs_row >= VGA_ROWS) {
+		term_scroll(1);
 		curs_col = 0;
-		curs_row = 0;
+		curs_row = VGA_ROWS;
 	}
 }
 
@@ -97,7 +121,7 @@ void term_rainbow_print(const char* str) {
 	uint8_t temp_term_color = term_color;  // to save the original color setting
 	
 	for (size_t i = 0; str[i] != '\0'; i++) {  // stops when get a \0
-		term_color = vga_entry_color(0, (uint8_t)(i % 16));  // loop through avaliable foreground colors
+		term_color = vga_entry_color((uint8_t)(i % 16), (uint8_t)(i % 16));  // loop through avaliable colors
 		term_putc(str[i]);
 	}
 
