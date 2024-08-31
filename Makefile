@@ -11,11 +11,14 @@ C_SOURCES = $(wildcard $(SRC_DIR)/kernel/*.c $(SRC_DIR)/driver/*.c)
 HEADERS = $(wildcard $(SRC_DIR)/kernel/*.h $(SRC_DIR)/driver/*.h)
 OBJ = $(subst $(SRC_DIR)/,$(BUILD_DIR)/,$(patsubst %.c,%.o,$(C_SOURCES)))
 
-.PHONY: all run debug floppy_image kernel bootloader clean always
+.PHONY: all brun run debug floppy_image kernel bootloader clean always
 
-all: floppy_image
+all: clean floppy_image
 
-run: all
+run:
+	qemu-system-i386 -fda $(BUILD_DIR)/main_floppy.img
+
+brun: all
 	qemu-system-i386 -fda $(BUILD_DIR)/main_floppy.img
 
 debug: all
