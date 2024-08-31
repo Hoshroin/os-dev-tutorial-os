@@ -72,6 +72,12 @@ main:
 	; wait key
 	mov ah, 0
 	int 16h
+
+	; change background color back to default
+	mov ah, 0Bh
+	mov bh, 0
+	mov bl, 0
+	int 0x10
 	
 	call switch2pm
 
@@ -122,43 +128,6 @@ prts:
 	; release the stack, fifo
 	pop ax
 	pop si
-	ret
-
-;
-; converts DWORD hex value into string
-; params:
-;   - bl: the hex value
-; return:
-;   - [temp_hex_string]: the string
-;
-hex2str:
-	pusha
-	mov cx, 0
-
-.step1:
-	cmp cx, 2
-	je .done
-
-	mov dl, bl		; work with the duplica dl
-	and dl, 0x0F		; get the last byte by masking
-
-	add dl, 0x30		; converts to ASCII
-	cmp dl, 0x39		; if greater than 9
-	jle .step2
-	add dl, 7		; into 'A' -> 'F' ASCII section
-
-.step2:
-	mov di, 3
-	sub di, cx			; char offset
-	mov bp, temp_hex_string
-	mov [bp + di], dl	; write into the placeholder string
-	ror bl, 4
-
-	inc cx
-	jmp .step1
-
-.done:
-	popa
 	ret
 
 ;
